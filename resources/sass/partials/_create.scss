@@ -1,0 +1,17 @@
+@use 'variables';
+
+.new_booking_form{
+
+  width: 60%;
+  margin: auto;
+
+  .booking_date{
+    display: inline-block;
+    padding-right: 20px;
+    max-width: 30%;
+  }
+  textarea{
+    width: 100%;
+  }
+
+}

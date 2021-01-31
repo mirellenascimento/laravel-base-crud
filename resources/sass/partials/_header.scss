@@ -1,0 +1,25 @@
+@use 'variables';
+
+header{
+
+  height: 80px;
+  padding-top: 100px;
+  padding-bottom: 100px;
+
+  //General
+  ul{
+    margin-right: 1rem;
+  }
+
+  li{
+    display: inline-block;
+    list-style: none;
+  }
+
+  //logo
+  img{
+    height: 40px;
+  }
+
+
+}
