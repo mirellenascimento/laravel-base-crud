@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 
 use App\Booking;
 
+use Illuminate\Support\Facades\Validator;
+
+use App\Http\Requests\BookingFormRequest;
+
 class BookingsController extends Controller
 {
     /**
@@ -13,10 +17,23 @@ class BookingsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+      $searchValidate = Validator::make(
+        $request->all(),
+        [
+          'search'=>'bail|string|min:3'
+        ]
+      );
+
+      if (!$searchValidate->fails()) {
+        $bookings = Booking::where('guest_full_name', 'LIKE', "%$request->search%")->get();
+      } else {
         $bookings = Booking::all();
-        return view('bookings.list', compact('bookings'));
+      }
+
+      return view('bookings.list', compact('bookings'));
+
     }
 
     /**
@@ -35,18 +52,19 @@ class BookingsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BookingFormRequest $request)
     {
-        $newBooking = new Booking();
-        $newBooking->guest_full_name = $request->input('new_guest_full_name');
-        $newBooking->guest_credit_card = $request->input('new_guest_credit_card');
-        $newBooking->room = $request->input('new_room');
-        $newBooking->from_date = $request->input('new_from_date');
-        $newBooking->to_date = $request->input('new_to_date');
-        $newBooking->more_details = $request->input('new_more_details');
+        $validated = $request->validated();
+        $booking = new Booking();
+        $booking->guest_full_name = $validated['guest_full_name'];
+        $booking->guest_credit_card = $validated['guest_credit_card'];
+        $booking->room = $validated['room'];
+        $booking->from_date = $validated['from_date'];
+        $booking->to_date = $validated['to_date'];
+        $booking->more_details = $validated['more_details'];
 
-        $newBooking->Save();
-        return view('bookings.new_booking_success');
+        $booking->Save();
+        return view('bookings.index');
     }
 
     /**
@@ -70,7 +88,8 @@ class BookingsController extends Controller
      */
     public function edit($id)
     {
-        //
+        $booking = Booking::find($id);
+        return view('bookings.edit', compact('booking'));
     }
 
     /**
@@ -80,9 +99,22 @@ class BookingsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(BookingFormRequest $request, $id)
     {
-        //
+        $validated = $request->validated();
+        $booking = Booking::find($id);
+        $booking->guest_full_name = $validated['guest_full_name'];
+        $booking->guest_credit_card = $validated['guest_credit_card'];
+        $booking->room = $validated['room'];
+        $booking->from_date = $validated['from_date'];
+        $booking->to_date = $validated['to_date'];
+        $booking->more_details = $validated['more_details'];
+
+        $booking->Save();
+        return view('bookings.edit_booking_success', compact('booking'));
+
+
+
     }
 
     /**
@@ -93,6 +125,7 @@ class BookingsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Booking::destroy($id);
+        return redirect()->route('bookings.index');
     }
 }

@@ -13,7 +13,15 @@
               <h5 class="card-title">Name: {{$booking->guest_full_name}}</h5>
               <p class="card-text">Room: {{$booking->room}}</p>
               <p class="card-text">Check-in: {{$booking->from_date}} | Check-out: {{$booking->to_date}}</p>
-              <a href="{{route('bookings.show', $booking->id)}}"><h5 class="card-title">More Details</h5></a>
+              <div class="card-footer text-muted d-flex justify-content-around align-items-center">
+                <a href="{{route('bookings.edit', $booking->id)}}" class="btn btn-secondary">Edit Booking</a>
+                <form class="" action="{{route('bookings.destroy', $booking->id)}}" method="post">
+                  @csrf
+                  @method('DELETE')
+                  <button type="submit" class="btn btn-secondary" name="button">Delete Booking</button>
+
+                </form>
+              </div>
             </div>
           </div>
           @endforeach
